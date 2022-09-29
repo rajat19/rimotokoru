@@ -7,7 +7,7 @@ import io.grpc.ServerBuilder;
 
 import java.io.IOException;
 
-public class GreetingServer {
+public class ApplicationServer {
 
     public static void main(final String[] args) throws IOException, InterruptedException {
         final int port = 50051;

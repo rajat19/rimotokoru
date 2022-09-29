@@ -1,8 +1,5 @@
 package greeting.client;
 
-import com.proto.calculator.CalculatorRequest;
-import com.proto.calculator.CalculatorResponse;
-import com.proto.calculator.CalculatorServiceGrpc;
 import com.proto.greeting.GreetingRequest;
 import com.proto.greeting.GreetingResponse;
 import com.proto.greeting.GreetingServiceGrpc;
@@ -15,14 +12,16 @@ public class GreetingClient {
         System.out.println("Enter doGreet");
         final GreetingServiceGrpc.GreetingServiceBlockingStub stub = GreetingServiceGrpc.newBlockingStub(channel);
         final GreetingResponse response = stub.greet(GreetingRequest.newBuilder().setFirstName("Rajat").build());
-        System.out.println("Greeting " + response.getResult());
+        System.out.println("Greeting ::" + response.getResult());
     }
 
-    private static void doSum(final ManagedChannel channel) {
-        System.out.println("Enter doSum");
-        final CalculatorServiceGrpc.CalculatorServiceBlockingStub stub = CalculatorServiceGrpc.newBlockingStub(channel);
-        final CalculatorResponse response = stub.sum(CalculatorRequest.newBuilder().setFirstNumber(3).setSecondNumber(10).build());
-        System.out.println(response.getResult());
+    private static void doGreetManyTimes(final ManagedChannel channel) {
+        System.out.println("Enter doGreetManyTimes");
+        final GreetingServiceGrpc.GreetingServiceBlockingStub stub = GreetingServiceGrpc.newBlockingStub(channel);
+        stub.greetManyTimes(GreetingRequest.newBuilder().setFirstName("Rajat").build())
+                .forEachRemaining(greetingResponse -> {
+                    System.out.println("Greeting ::" + greetingResponse.getResult());
+                });
     }
 
     public static void main(final String[] args) {
@@ -38,7 +37,7 @@ public class GreetingClient {
 
         switch (args[0]) {
             case "greet": doGreet(channel); break;
-            case "sum": doSum(channel); break;
+            case "greetManyTimes": doGreetManyTimes(channel); break;
             default:
                 System.out.println("Keyword invalid" + args[0]);
         }

@@ -5,15 +5,24 @@ package calculator;
 option java_package = "com.proto.calculator";
 option java_multiple_files = true;
 
-message CalculatorRequest {
+message SumRequest {
   int32 first_number = 1;
   int32 second_number = 2;
 }
 
-message CalculatorResponse {
-  string result = 1;
+message SumResponse {
+  int32 result = 1;
+}
+
+message PrimeRequest {
+  int32 number = 1;
+}
+
+message PrimeResponse {
+  int32 result = 1;
 }
 
 service CalculatorService {
-  rpc sum(CalculatorRequest) returns (CalculatorResponse);
+  rpc sum(SumRequest) returns (SumResponse);
+  rpc prime(PrimeRequest) returns (stream PrimeResponse);
 }
