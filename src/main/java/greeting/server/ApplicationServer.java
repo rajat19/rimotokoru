@@ -1,7 +1,7 @@
 package greeting.server;
 
-import greeting.server.impl.CalculatorServiceImpl;
-import greeting.server.impl.GreetingServiceImpl;
+import greeting.service.CalculatorServiceImpl;
+import greeting.service.GreetingServiceImpl;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 
