@@ -5,42 +5,18 @@ package calculator;
 option java_package = "com.proto.calculator";
 option java_multiple_files = true;
 
-message SumRequest {
-  int32 first_number = 1;
-  int32 second_number = 2;
-}
-
-message SumResponse {
-  int32 result = 1;
-}
-
-message PrimeRequest {
-  int32 number = 1;
-}
-
-message PrimeResponse {
-  int32 result = 1;
-}
-
-message AverageRequest {
-  int32 number = 1;
-}
-
-message AverageResponse {
-  double result = 1;
-}
-
-message MaxRequest {
-  int32 number = 1;
-}
-
-message MaxResponse {
-  int32 result = 1;
-}
+import "calculator/sum.proto";
+import "calculator/prime.proto";
+import "calculator/average.proto";
+import "calculator/max.proto";
+import "calculator/sqrt.proto";
 
 service CalculatorService {
   rpc sum(SumRequest) returns (SumResponse);
   rpc prime(PrimeRequest) returns (stream PrimeResponse);
   rpc average(stream AverageRequest) returns (AverageResponse);
   rpc max(stream MaxRequest) returns (stream MaxResponse);
+
+  // Returns a Status.INVALID_ARGUMENT is the SqrtRequest.number is negative
+  rpc sqrt(SqrtRequest) returns (SqrtResponse);
 }
