@@ -4,6 +4,7 @@ import calculator.service.CalculatorServiceImpl;
 import greeting.service.GreetingServiceImpl;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
+import io.grpc.protobuf.services.ProtoReflectionService;
 
 import java.io.IOException;
 
@@ -16,6 +17,7 @@ public class ApplicationServer {
                 .forPort(port)
                 .addService(new GreetingServiceImpl())
                 .addService(new CalculatorServiceImpl())
+                .addService(ProtoReflectionService.newInstance())
                 .build();
         server.start();
 
