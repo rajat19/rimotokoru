@@ -1,4 +1,4 @@
-package greeting.client;
+package calculator.client;
 
 import com.proto.calculator.AverageRequest;
 import com.proto.calculator.AverageResponse;
@@ -6,6 +6,8 @@ import com.proto.calculator.CalculatorServiceGrpc;
 import com.proto.calculator.MaxRequest;
 import com.proto.calculator.MaxResponse;
 import com.proto.calculator.PrimeRequest;
+import com.proto.calculator.SqrtRequest;
+import com.proto.calculator.SqrtResponse;
 import com.proto.calculator.SumRequest;
 import com.proto.calculator.SumResponse;
 import io.grpc.ManagedChannel;
@@ -97,6 +99,22 @@ public class CalculatorClient {
         latch.await(3, TimeUnit.SECONDS);
     }
 
+    private static void doSqrt(final ManagedChannel channel) {
+        System.out.println("Enter doSqrt");
+        final CalculatorServiceGrpc.CalculatorServiceBlockingStub stub = CalculatorServiceGrpc.newBlockingStub(channel);
+
+        SqrtResponse response = stub.sqrt(SqrtRequest.newBuilder().setNumber(25).build());
+        System.out.println("Sqrt 25:: "+ response.getResult());
+
+        try {
+            response = stub.sqrt(SqrtRequest.newBuilder().setNumber(-1).build());
+            System.out.println("Sqrt -1 :: "+response.getResult());
+        } catch (RuntimeException e) {
+            System.out.println("Got an exception");
+            e.printStackTrace();
+        }
+    }
+
     public static void main(final String[] args) throws InterruptedException {
         if (args.length == 0) {
             System.out.println("Need one argument to work");
@@ -113,6 +131,7 @@ public class CalculatorClient {
             case "prime": doPrime(channel); break;
             case "average": doAverage(channel); break;
             case "max": doMax(channel); break;
+            case "sqrt": doSqrt(channel); break;
             default:
                 System.out.println("Keyword invalid" + args[0]);
         }
