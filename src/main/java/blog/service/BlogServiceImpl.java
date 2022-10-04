@@ -5,6 +5,7 @@ import com.mongodb.MongoException;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.InsertOneResult;
 import com.proto.blog.Blog;
 import com.proto.blog.BlogId;
@@ -116,11 +117,37 @@ public class BlogServiceImpl extends BlogServiceGrpc.BlogServiceImplBase {
 
     @Override
     public void deleteBlog(final BlogId request, final StreamObserver<Empty> responseObserver) {
-        super.deleteBlog(request, responseObserver);
+        if (request.getId().isEmpty()) {
+            responseObserver.onError(Status.INVALID_ARGUMENT
+                    .withDescription("The blog Id cannot be empty")
+                    .asRuntimeException());
+            return;
+        }
+        final String id = request.getId();
+        final Document result = mongoCollection
+                .findOneAndDelete(eq("_id", new ObjectId(id)));
+        if (result == null) {
+            responseObserver.onError(Status.NOT_FOUND
+                    .withDescription("Blog not found")
+                    .augmentDescription("BlogId:: "+id)
+                    .asRuntimeException());
+            return;
+        }
+
+        responseObserver.onNext(Empty.getDefaultInstance());
+        responseObserver.onCompleted();
     }
 
     @Override
     public void listBlogs(final Empty request, final StreamObserver<Blog> responseObserver) {
-        super.listBlogs(request, responseObserver);
+        for(final Document document: mongoCollection.find()) {
+            responseObserver.onNext(Blog.newBuilder()
+                    .setId(document.getObjectId("_id").toString())
+                    .setAuthor(document.getString("author"))
+                    .setTitle(document.getString("title"))
+                    .setContent(document.getString("content"))
+                    .build());
+        }
+        responseObserver.onCompleted();
     }
 }

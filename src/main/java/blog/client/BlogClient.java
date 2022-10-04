@@ -1,5 +1,6 @@
 package blog.client;
 
+import com.google.protobuf.Empty;
 import com.proto.blog.Blog;
 import com.proto.blog.BlogId;
 import com.proto.blog.BlogServiceGrpc;
@@ -54,6 +55,21 @@ public class BlogClient {
         }
     }
 
+    private static void listBlogs(final BlogServiceGrpc.BlogServiceBlockingStub stub) {
+        stub.listBlogs(Empty.getDefaultInstance())
+                .forEachRemaining(System.out::println);
+    }
+
+    private static void deleteBlog(final BlogServiceGrpc.BlogServiceBlockingStub stub, final BlogId blogId) {
+        try {
+            stub.deleteBlog(blogId);
+            System.out.println("Blog Deleted:: "+blogId.getId());
+        } catch (final StatusRuntimeException e) {
+            System.out.println("The blog couldn't be deleted");
+            e.printStackTrace();
+        }
+    }
+
     private static void run(final ManagedChannel channel) {
         final BlogServiceGrpc.BlogServiceBlockingStub stub = BlogServiceGrpc.newBlockingStub(channel);
 
@@ -64,6 +80,8 @@ public class BlogClient {
 
         readBlog(stub, blogId);
         updateBlog(stub, blogId);
+        listBlogs(stub);
+        deleteBlog(stub, blogId);
     }
 
     public static void main(final String[] args) {
